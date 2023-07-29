@@ -8,5 +8,4 @@ export const sendCookie = (UserDoc, res, username, statusCode = 200) => {
             username,
         });
     });
-
 };

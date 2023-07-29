@@ -22,7 +22,6 @@ export default function Header() {
     });
     setUserInfo(null);
     navigate("/");
-    // <Navigate to={'/login'} />;
 
   }
 

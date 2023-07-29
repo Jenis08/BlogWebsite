@@ -41,7 +41,6 @@ export const profile = (req, res) => {
         if (err) throw err;
         res.json(info);
     })
-
 };
 
 export const logout = (req, res) => {

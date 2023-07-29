@@ -2,6 +2,7 @@
 import {Post} from '../models/Post.js';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
+import util from 'util';
 
 export const createPost = async (req, res) => {
 
@@ -51,20 +52,51 @@ export const editPost =  async (req, res) => {
     const { token } = req.cookies;
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, info) => {
         if (err) throw err;
-        const { id, title, summary, content } = req.body;
+        const id = req.params.id;
+        const { title, summary, content } = req.body;
         const postDoc = await Post.findById(id);
         const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
         if (!isAuthor) {
             return res.status(400).json('you are not the author');
         }
-        await postDoc.update({
-            title,
-            summary,
-            content,
-            cover: newPath ? newPath : postDoc.cover,
-        });
+        
+        const updateData = { title };
+        if (summary) updateData.summary = summary;
+        if (content) updateData.content = content;
+        if (newPath) updateData.cover = newPath;
 
-        res.json(postDoc);
+        const updatedPost = await Post.findOneAndUpdate({ _id: id }, { $set: updateData }, { new: true });
+
+        res.json(updatedPost);
     });
 
 };
+
+// const jwtVerify = util.promisify(jwt.verify);
+
+// export const editPost = async (req, res) => {
+//     try {
+//         // ... (existing code)
+
+//         const decodedToken = await jwtVerify(req.cookies.token, process.env.JWT_SECRET);
+//         const { id, title, summary, content } = req.body;
+//         const postDoc = await Post.findById(id);
+
+//         const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(decodedToken.id);
+//         if (!isAuthor) {
+//             return res.status(400).json('You are not the author');
+//         }
+
+//         const updateData = { title };
+//         if (summary) updateData.summary = summary;
+//         if (content) updateData.content = content;
+//         if (newPath) updateData.cover = newPath;
+
+//         const updatedPost = await Post.updateOne({ _id: id }, { $set: updateData });
+
+//         res.json(updatedPost);
+//     } catch (error) {
+//         console.error("Error updating post:", error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// };

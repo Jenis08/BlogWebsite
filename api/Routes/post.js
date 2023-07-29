@@ -18,6 +18,6 @@ router.get('/post', seePost);
 
 router.get('/post/:id', getPost);
 
-router.put('/post', isAuthenticated, uploadMiddleware.single('file'), editPost);
+router.put('/post/:id', isAuthenticated, uploadMiddleware.single('file'), editPost);
 
 export default router;

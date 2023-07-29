@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import Editor from "../components/Editor";
+import PostForm from "../components/PostForm";
 
 export default function EditPost() {
     const { id } = useParams();
@@ -31,7 +31,7 @@ export default function EditPost() {
         if (files?.[0]) {
             data.set('file', files?.[0]);
         }
-        const response = await fetch('http://localhost:4000/post', {
+        const response = await fetch('http://localhost:4000/post/' + id, {
             method: 'PUT',
             body: data,
             credentials: 'include',
@@ -46,19 +46,14 @@ export default function EditPost() {
     }
 
     return (
-        <form onSubmit={updatePost}>
-            <input type="title"
-                placeholder={'Title'}
-                value={title}
-                onChange={ev => setTitle(ev.target.value)} />
-            <input type="summary"
-                placeholder={'Summary'}
-                value={summary}
-                onChange={ev => setSummary(ev.target.value)} />
-            <input type="file"
-                onChange={ev => setFiles(ev.target.files)} />
-            <Editor onChange={setContent} value={content} />
-            <button style={{ marginTop: '5px' }}>Update post</button>
-        </form>
+        <PostForm title = {title} 
+                summary={summary} 
+                setFiles={setFiles} 
+                content={content} 
+                setContent={setContent} 
+                func={updatePost}
+                setSummary={setSummary}
+                setTitle={setTitle}
+                buttonTitle = {"Update Post"}  />
     );
 }

@@ -1,24 +1,7 @@
 import { useState } from "react";
 import 'react-quill/dist/quill.snow.css';
 import { Navigate, useNavigate } from "react-router-dom";
-import Editor from "../components/Editor";
-
-const modules = {
-    toolbar: [
-        [{ 'header': [1, 2, false] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-        ['link', 'image'],
-        ['clean']
-    ],
-};
-
-const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image'
-];
+import PostForm from "../components/PostForm";
 
 export default function CreatePost() {
     const [title, setTitle] = useState('');
@@ -28,8 +11,6 @@ export default function CreatePost() {
     const [redirect, setRedirect] = useState(false);
     const navigate = useNavigate();
 
-
-
     async function CreateNewPost(ev){
         
         const data = new FormData();
@@ -38,8 +19,6 @@ export default function CreatePost() {
         data.set('file', files[0]);
         data.set('summary', summary);
         
-
-
         ev.preventDefault();
         const response = await fetch('http://localhost:4000/post', {
             method:'POST',
@@ -60,12 +39,14 @@ export default function CreatePost() {
     }
     
     return (
-        <form>
-            <input type='text' placeholder="title" value={title} onChange={ev => setTitle(ev.target.value)}/>
-            <input type="text" placeholder="summary" value={summary} onChange={ev => setSummary(ev.target.value)} />
-            <input type="file" onChange={ev => setFiles(ev.target.files)} />
-            <Editor value={Content} onChange={setContent} />
-            <button onClick={CreateNewPost} style={{marginTop: '5px'}} >Create Post</button>
-        </form>
+        <PostForm title = {title} 
+                summary={summary} 
+                setFiles={setFiles} 
+                content={Content} 
+                setContent={setContent} 
+                func={CreateNewPost}
+                setSummary={setSummary}
+                setTitle={setTitle}
+                buttonTitle = {"Create Post"}  />
     );
 }
